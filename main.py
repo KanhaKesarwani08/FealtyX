@@ -97,7 +97,7 @@ async def get_student(student_id: int, db: StudentDB = Depends(get_db)):
     return student
 
 @app.put("/students/{student_id}", response_model=Student)
-async def update_student(student_id: int, student: StudentBase, db: StudentDB = Depends(get_db)):
+async def update_student(student_id: int, student: StudentUpdateBase, db: StudentDB = Depends(get_db)):
     updated_student = db.update_student(student_id, student)
     if updated_student is None:
         raise HTTPException(status_code=404, detail="Student not found")

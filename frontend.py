@@ -40,9 +40,21 @@ def get_student(student_id):
 
 def update_student(student_id, name, age, email):
     try:
+        # Create update data dictionary with only provided values
+        update_data = {}
+        if name.strip():  # Only include if not empty
+            update_data["name"] = name
+        if age is not None and age != 0:  # Include if age is provided and not 0
+            update_data["age"] = int(age)
+        if email.strip():  # Only include if not empty
+            update_data["email"] = email
+            
+        if not update_data:  # If no fields to update
+            return "Error: Please provide at least one field to update"
+        
         response = requests.put(
             f"{BASE_URL}/students/{student_id}",
-            json={"name": name, "age": int(age), "email": email}
+            json=update_data
         )
         if response.status_code == 200:
             return json.dumps(response.json(), indent=2)
@@ -108,17 +120,17 @@ with gr.Blocks(title="Student Management System") as demo:
         with gr.Row():
             with gr.Column():
                 update_id = gr.Number(label="Student ID", precision=0)
-                update_name = gr.Textbox(label="Name")
-                update_age = gr.Number(label="Age", minimum=16, maximum=120)
-                update_email = gr.Textbox(label="Email")
+                update_name = gr.Textbox(label="Name (Optional - leave empty to keep current)")
+                update_age = gr.Number(label="Age (Optional - leave empty to keep current)", minimum=16, maximum=120)
+                update_email = gr.Textbox(label="Email (Optional - leave empty to keep current)")
                 update_btn = gr.Button("Update Student")
-            with gr.Column():
-                update_output = gr.Textbox(label="Result", lines=5)
-        update_btn.click(
-            update_student,
-            inputs=[update_id, update_name, update_age, update_email],
-            outputs=update_output
-        )
+        with gr.Column():
+            update_output = gr.Textbox(label="Result", lines=5)
+    update_btn.click(
+        update_student,
+        inputs=[update_id, update_name, update_age, update_email],
+        outputs=update_output
+    )
 
     with gr.Tab("Delete Student"):
         with gr.Row():
@@ -139,4 +151,4 @@ with gr.Blocks(title="Student Management System") as demo:
         summary_btn.click(get_student_summary, inputs=[summary_id], outputs=summary_output)
 
 if __name__ == "__main__":
-    demo.launch(share=False)
+    demo.launch(share= True)
