@@ -1,6 +1,8 @@
 fastapi
 uvicorn
+gunicorn
 pydantic[email]
 httpx
 gradio
-gunicorn
+python-multipart
+uvicorn[standard]
